@@ -151,11 +151,11 @@
         this.errorFields.street = !this.street;
         this.errorFields.entrance = !this.entrance;
         this.errorFields.floor = !this.floor;
-  
+
         if (Object.values(this.errorFields).some(error => error)) return;
-  
+
         const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
-  
+
         const orderData = {
           selected_dates: this.selectedDates,
           price_range: this.selectedPrice.replace(" ₸", "").replace(" ", ""),
@@ -169,7 +169,7 @@
           comment: this.comment,
           user_id: 1
         };
-  
+
         try {
           const response = await fetch("https://bloom-backend-production.up.railway.app/orders", {
             method: "POST",
@@ -178,13 +178,13 @@
             },
             body: JSON.stringify(orderData)
           });
-  
+
           const data = await response.json();
-  
+
           if (response.ok) {
             console.log("Заказ создан:", data);
             alert("Заказ успешно оформлен!");
-  
+
             this.selectedPrice = "";
             this.selectedCity = "";
             this.street = "";
@@ -194,6 +194,14 @@
             this.floor = "";
             this.phone = "";
             this.comment = "";
+
+
+            if (window.Telegram && window.Telegram.WebApp) {
+              window.Telegram.WebApp.close();
+            } else {
+ 
+              window.close();
+            }
           } else {
             console.error("Ошибка сервера:", data.error);
             alert(`Ошибка: ${data.error}`);
