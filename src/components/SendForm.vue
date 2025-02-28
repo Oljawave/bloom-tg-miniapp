@@ -125,24 +125,24 @@
       formatPhone() {
         setTimeout(() => {
           let value = this.phone.replace(/\D/g, "").substring(0, 11);
-
+  
           if (value.length === 0) {
             this.phone = "";
             return;
           }
-
+  
           if (!value.startsWith("7")) value = "7" + value;
-
+  
           let formatted = `+7 (${value.substring(1, 4)}`;
-
+  
           if (value.length > 4) formatted += `) ${value.substring(4, 7)}`;
           if (value.length > 7) formatted += `-${value.substring(7, 9)}`;
           if (value.length > 9) formatted += `-${value.substring(9, 11)}`;
-
+  
           this.phone = formatted;
-        }, 10); 
+        }, 10);
       },
-      submitForm() {
+      async submitForm() {
         this.errorFields.selectedPrice = !this.selectedPrice;
         this.errorFields.selectedCity = !this.selectedCity;
         this.errorFields.phone = !this.phone || this.phone.length !== 18;
@@ -151,11 +151,57 @@
         this.errorFields.street = !this.street;
         this.errorFields.entrance = !this.entrance;
         this.errorFields.floor = !this.floor;
-
+  
         if (Object.values(this.errorFields).some(error => error)) return;
-
+  
         const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
-        console.log("Отправка формы с номером:", formattedPhone);
+  
+        const orderData = {
+          selected_dates: this.selectedDates,
+          price_range: this.selectedPrice.replace(" ₸", "").replace(" ", ""),
+          city: this.selectedCity,
+          street: this.street,
+          building: this.building,
+          apartment: this.apartment,
+          entrance: this.entrance,
+          floor: this.floor,
+          phone: formattedPhone,
+          comment: this.comment,
+          user_id: 1
+        };
+  
+        try {
+          const response = await fetch("https://bloom-backend-production.up.railway.app/orders", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(orderData)
+          });
+  
+          const data = await response.json();
+  
+          if (response.ok) {
+            console.log("Заказ создан:", data);
+            alert("Заказ успешно оформлен!");
+  
+            this.selectedPrice = "";
+            this.selectedCity = "";
+            this.street = "";
+            this.building = "";
+            this.apartment = "";
+            this.entrance = "";
+            this.floor = "";
+            this.phone = "";
+            this.comment = "";
+          } else {
+            console.error("Ошибка сервера:", data.error);
+            alert(`Ошибка: ${data.error}`);
+          }
+        } catch (error) {
+          console.error("Ошибка сети:", error);
+          alert("Ошибка соединения. Проверьте интернет или попробуйте позже.");
+        }
       },
       handleResize() {
         if (window.visualViewport.height < this.originalHeight) {
@@ -173,6 +219,7 @@
     }
   };
   </script>
+  
   
   
   
@@ -222,12 +269,10 @@
     border-bottom: 1px solid #000;
     font-size: 14px;
     background-color: transparent;
-    -webkit-appearance: none;
   }
   input:focus, select:focus {
     outline: none;
     border-bottom: 1px solid #000;
-    -webkit-appearance: none;
   }
   .error-message {
     font-size: 12px;
