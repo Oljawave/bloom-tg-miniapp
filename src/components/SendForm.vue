@@ -222,10 +222,12 @@
     border-bottom: 1px solid #000;
     font-size: 14px;
     background-color: transparent;
+    -webkit-appearance: none;
   }
   input:focus, select:focus {
     outline: none;
     border-bottom: 1px solid #000;
+    -webkit-appearance: none;
   }
   .error-message {
     font-size: 12px;
