@@ -123,28 +123,28 @@
       },
   
       formatPhone() {
-        let value = this.phone.replace(/\D/g, "").substring(0, 11);
-        if (!value.startsWith("7")) value = "7" + value; 
-  
-        let formattedValue = "+7";
-        if (value.length > 1) formattedValue += " (" + value.substring(1, 4);
-        if (value.length > 4) formattedValue += ") " + value.substring(4, 7);
-        if (value.length > 7) formattedValue += "-" + value.substring(7, 9);
-        if (value.length > 9) formattedValue += "-" + value.substring(9, 11);
-        
-        this.phone = formattedValue;
-      },
+      let value = this.phone.replace(/\D/g, "").substring(0, 11);
+      if (!value.startsWith("7")) value = "7" + value;
       
-      submitForm() {
-        this.errorFields.selectedPrice = !this.selectedPrice;
-        this.errorFields.selectedCity = !this.selectedPrice;
-        this.errorFields.phone = !this.phone;
-        this.errorFields.apartment = !this.apartment;
-        this.errorFields.building = !this.building;
-        this.errorFields.street = !this.street;
-        this.errorFields.entrance = !this.entrance;
-        this.errorFields.floor = !this.floor;
-      }
+      this.phone = `+7 (${value.substring(1, 4)}) ${value.substring(4, 7)}-${value.substring(7, 9)}-${value.substring(9, 11)}`.trim();
+    },
+    
+    submitForm() {
+      this.errorFields.selectedPrice = !this.selectedPrice;
+      this.errorFields.selectedCity = !this.selectedPrice;
+      this.errorFields.phone = !this.phone || this.phone.length !== 18;
+      this.errorFields.apartment = !this.apartment;
+      this.errorFields.building = !this.building;
+      this.errorFields.street = !this.street;
+      this.errorFields.entrance = !this.entrance;
+      this.errorFields.floor = !this.floor;
+      
+      if (Object.values(this.errorFields).some(error => error)) return;
+      
+      const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
+      console.log("Отправка формы с номером:", formattedPhone);
+      
+    }
     }
   };
   </script>

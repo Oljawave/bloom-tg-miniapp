@@ -31,24 +31,21 @@ export default {
 </script>
 
 <style>
-
+/* Отключаем автоматическое изменение темы */
 :root {
     color-scheme: light !important;
 }
 
+/* Фиксируем белый фон на всю страницу */
 html, body, #app {
     background-color: #fff !important;
-    color: #000 !important; 
+    color: #000 !important; /* Чтобы текст не был белым */
     min-height: 100vh;
     margin: 0;
     padding: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-    html, body, #app {
-        background-color: #fff !important;
-        color: #000 !important;
-    }
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .container {
@@ -58,6 +55,7 @@ html, body, #app {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    align-items: center; 
 }
 
 h2 {
@@ -66,7 +64,26 @@ h2 {
     text-transform: uppercase;
     margin-bottom: 25px;
     font-family: 'SF Pro', sans-serif;
-    align-self: flex-start;
-    margin-left: 20px;
+    text-align: center;
+}
+
+
+@media (min-width: 500px) {
+    .container {
+        max-width: 450px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 600px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 800px;
+    }
 }
 </style>
+
