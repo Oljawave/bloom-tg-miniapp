@@ -123,22 +123,24 @@
         this[field] = this[field].replace(/\D/g, "");
       },
       formatPhone() {
-        let value = this.phone.replace(/\D/g, "").substring(0, 11);
+        setTimeout(() => {
+          let value = this.phone.replace(/\D/g, "").substring(0, 11);
 
-        if (value.length === 0) {
-          this.phone = "";
-          return;
-        }
+          if (value.length === 0) {
+            this.phone = "";
+            return;
+          }
 
-        if (!value.startsWith("7")) value = "7" + value;
+          if (!value.startsWith("7")) value = "7" + value;
 
-        let formatted = `+7 (${value.substring(1, 4)}`;
+          let formatted = `+7 (${value.substring(1, 4)}`;
 
-        if (value.length > 4) formatted += `) ${value.substring(4, 7)}`;
-        if (value.length > 7) formatted += `-${value.substring(7, 9)}`;
-        if (value.length > 9) formatted += `-${value.substring(9, 11)}`;
+          if (value.length > 4) formatted += `) ${value.substring(4, 7)}`;
+          if (value.length > 7) formatted += `-${value.substring(7, 9)}`;
+          if (value.length > 9) formatted += `-${value.substring(9, 11)}`;
 
-        this.phone = formatted;
+          this.phone = formatted;
+        }, 10); 
       },
       submitForm() {
         this.errorFields.selectedPrice = !this.selectedPrice;
