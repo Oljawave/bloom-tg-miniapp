@@ -150,7 +150,7 @@
   </script>
   
     
-    <style scoped>
+  <style scoped>
   
   body {
     font-family: 'SF Pro', sans-serif;
@@ -222,6 +222,22 @@
       width: 100%;
     }
   
-    
+    @media (max-width: 600px) {
+      .form-container {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 390px;
+        background: white;
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+    }
+
+    input:focus, select:focus {
+      scroll-margin-bottom: 150px;
+    }
+
     </style>
     
