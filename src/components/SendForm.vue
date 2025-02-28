@@ -117,44 +117,57 @@
       };
     },
     methods: {
-  
       validateNumber(field) {
         this[field] = this[field].replace(/\D/g, "");
       },
-  
       formatPhone() {
-      let value = this.phone.replace(/\D/g, "").substring(0, 11);
-      if (!value.startsWith("7")) value = "7" + value;
-      
-      this.phone = `+7 (${value.substring(1, 4)}) ${value.substring(4, 7)}-${value.substring(7, 9)}-${value.substring(9, 11)}`.trim();
+        let value = this.phone.replace(/\D/g, "").substring(0, 11);
+        if (!value.startsWith("7")) value = "7" + value;
+        
+        this.phone = `+7 (${value.substring(1, 4)}) ${value.substring(4, 7)}-${value.substring(7, 9)}-${value.substring(9, 11)}`.trim();
+      },
+      submitForm() {
+        this.errorFields.selectedPrice = !this.selectedPrice;
+        this.errorFields.selectedCity = !this.selectedCity;
+        this.errorFields.phone = !this.phone || this.phone.length !== 18;
+        this.errorFields.apartment = !this.apartment;
+        this.errorFields.building = !this.building;
+        this.errorFields.street = !this.street;
+        this.errorFields.entrance = !this.entrance;
+        this.errorFields.floor = !this.floor;
+        
+        if (Object.values(this.errorFields).some(error => error)) return;
+        
+        const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
+        console.log("Отправка формы с номером:", formattedPhone);
+      },
+      addInputListeners() {
+        const inputs = this.$el.querySelectorAll("input, textarea");
+        inputs.forEach(input => {
+          input.addEventListener("focus", function () {
+            setTimeout(() => {
+              this.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 300);
+          });
+          input.addEventListener("blur", function () {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+        });
+      }
     },
-    
-    submitForm() {
-      this.errorFields.selectedPrice = !this.selectedPrice;
-      this.errorFields.selectedCity = !this.selectedPrice;
-      this.errorFields.phone = !this.phone || this.phone.length !== 18;
-      this.errorFields.apartment = !this.apartment;
-      this.errorFields.building = !this.building;
-      this.errorFields.street = !this.street;
-      this.errorFields.entrance = !this.entrance;
-      this.errorFields.floor = !this.floor;
-      
-      if (Object.values(this.errorFields).some(error => error)) return;
-      
-      const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
-      console.log("Отправка формы с номером:", formattedPhone);
-      
-    }
+    mounted() {
+      this.addInputListeners();
     }
   };
-  </script>
+</script>
+
   
     
-  <style scoped>
+    <style scoped>
   
-  body {
-    font-family: 'SF Pro', sans-serif;
-  }
+    body {
+      font-family: 'SF Pro', sans-serif;
+    }
   
     .form-container {
       width: 100%;
@@ -222,22 +235,6 @@
       width: 100%;
     }
   
-    @media (max-width: 600px) {
-      .form-container {
-        position: fixed;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100%;
-        max-width: 390px;
-        background: white;
-        padding-bottom: env(safe-area-inset-bottom);
-      }
-    }
-
-    input:focus, select:focus {
-      scroll-margin-bottom: 150px;
-    }
-
+    
     </style>
     
