@@ -113,7 +113,9 @@
           entrance: false,
           floor: false,
           phone: false
-        }
+        },
+        keyboardVisible: false,
+        originalHeight: window.innerHeight
       };
     },
     methods: {
@@ -141,38 +143,23 @@
         const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
         console.log("Отправка формы с номером:", formattedPhone);
       },
-      focusNext(event) {
-        event.preventDefault();
-        const inputs = this.$el.querySelectorAll("input, select, textarea");
-        const index = [...inputs].indexOf(event.target);
-        if (index !== -1 && index < inputs.length - 1) {
-          inputs[index + 1].focus();
+      handleResize() {
+        if (window.visualViewport.height < this.originalHeight) {
+          document.body.style.paddingBottom = (this.originalHeight - window.visualViewport.height) + "px";
+        } else {
+          document.body.style.paddingBottom = "0px";
         }
       }
     },
     mounted() {
-      const inputs = this.$el.querySelectorAll("input, select, textarea");
-  
-      inputs.forEach(input => {
-        input.addEventListener("focus", function () {
-          setTimeout(() => {
-            this.scrollIntoView({ behavior: "smooth", block: "center" });
-          }, 300);
-        });
-  
-        input.addEventListener("blur", function () {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-  
-        input.addEventListener("keydown", (event) => {
-          if (event.key === "Enter") {
-            this.focusNext(event);
-          }
-        });
-      });
+      window.visualViewport.addEventListener("resize", this.handleResize);
+    },
+    beforeUnmount() {
+      window.visualViewport.removeEventListener("resize", this.handleResize);
     }
   };
   </script>
+  
   
   
 
