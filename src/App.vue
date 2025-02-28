@@ -65,4 +65,23 @@ h2 {
   margin-left: 20px;
 }
 
+:root {
+  background-color: #fff !important;
+}
+
+html, body {
+  background-color: #fff !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #000;
+    }
+}
+
+#app {
+    background-color: #fff !important;
+}
+
+
 </style>
