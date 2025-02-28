@@ -140,11 +140,19 @@
   
         const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
         console.log("Отправка формы с номером:", formattedPhone);
+      },
+      focusNext(event) {
+        event.preventDefault();
+        const inputs = this.$el.querySelectorAll("input, select, textarea");
+        const index = [...inputs].indexOf(event.target);
+        if (index !== -1 && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
       }
     },
     mounted() {
-      const inputs = this.$el.querySelectorAll("input, textarea");
-      
+      const inputs = this.$el.querySelectorAll("input, select, textarea");
+  
       inputs.forEach(input => {
         input.addEventListener("focus", function () {
           setTimeout(() => {
@@ -155,10 +163,17 @@
         input.addEventListener("blur", function () {
           window.scrollTo({ top: 0, behavior: "smooth" });
         });
+  
+        input.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            this.focusNext(event);
+          }
+        });
       });
     }
   };
   </script>
+  
   
 
   

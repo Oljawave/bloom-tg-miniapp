@@ -2,13 +2,7 @@
   <div class="container" :style="{ marginTop: containerMargin }">
     <h2>ОФОРМЛЕНИЕ ПОДПИСКИ 🌸</h2>
     <DatePicker v-if="!datesSelected" @datesSelected="handleDatesChosen" />
-    
-    <div v-else class="input-group" @click="resetDateSelection">
-      <label :class="{ active: formattedDates, label: true }">ВЫБРАННЫЕ ДАТЫ</label>
-      <input type="text" :value="formattedDates" readonly />
-    </div>
-
-    <SendForm v-if="datesSelected" :selected-dates="selectedDates" />
+    <SendForm v-else :selected-dates="selectedDates" />
   </div>
 </template>
 
@@ -28,18 +22,10 @@ export default {
       containerMargin: "0px",
     };
   },
-  computed: {
-    formattedDates() {
-      return this.selectedDates.length ? this.selectedDates.join(", ") : "";
-    },
-  },
   methods: {
     handleDatesChosen(dates) {
       this.selectedDates = dates;
       this.datesSelected = true;
-    },
-    resetDateSelection() {
-      this.datesSelected = false;
     },
     adjustForKeyboard() {
       const viewportHeight = window.visualViewport.height;
@@ -95,33 +81,6 @@ h2 {
   margin-bottom: 25px;
   font-family: "SF Pro", sans-serif;
   text-align: center;
-}
-
-.input-group {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  margin-top: 15px;
-  cursor: pointer;
-}
-
-.input-group label {
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  margin-bottom: 5px;
-  font-family: "SF Pro", sans-serif;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 14px;
-  text-align: center;
-  cursor: pointer;
-  background-color: #fff;
 }
 
 @media (min-width: 500px) {
