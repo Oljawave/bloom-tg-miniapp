@@ -31,15 +31,15 @@ export default {
 </script>
 
 <style>
-/* Отключаем автоматическое изменение темы */
+
 :root {
     color-scheme: light !important;
 }
 
-/* Фиксируем белый фон на всю страницу */
+
 html, body, #app {
     background-color: #fff !important;
-    color: #000 !important; /* Чтобы текст не был белым */
+    color: #000 !important; 
     min-height: 100vh;
     margin: 0;
     padding: 0;

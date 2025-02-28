@@ -82,9 +82,9 @@
     computed: {
       formattedDates() {
         return this.selectedDates.map(date => {
-          const [year, month, day] = date.split('-');
+          const [year, month, day] = date.split("-");
           return `${day}.${month}`;
-        }).join(', ');
+        }).join(", ");
       }
     },
     data() {
@@ -123,7 +123,7 @@
       formatPhone() {
         let value = this.phone.replace(/\D/g, "").substring(0, 11);
         if (!value.startsWith("7")) value = "7" + value;
-        
+  
         this.phone = `+7 (${value.substring(1, 4)}) ${value.substring(4, 7)}-${value.substring(7, 9)}-${value.substring(9, 11)}`.trim();
       },
       submitForm() {
@@ -135,31 +135,31 @@
         this.errorFields.street = !this.street;
         this.errorFields.entrance = !this.entrance;
         this.errorFields.floor = !this.floor;
-        
+  
         if (Object.values(this.errorFields).some(error => error)) return;
-        
+  
         const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
         console.log("Отправка формы с номером:", formattedPhone);
-      },
-      addInputListeners() {
-        const inputs = this.$el.querySelectorAll("input, textarea");
-        inputs.forEach(input => {
-          input.addEventListener("focus", function () {
-            setTimeout(() => {
-              this.scrollIntoView({ behavior: "smooth", block: "center" });
-            }, 300);
-          });
-          input.addEventListener("blur", function () {
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          });
-        });
       }
     },
     mounted() {
-      this.addInputListeners();
+      const inputs = this.$el.querySelectorAll("input, textarea");
+      
+      inputs.forEach(input => {
+        input.addEventListener("focus", function () {
+          setTimeout(() => {
+            this.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 300);
+        });
+  
+        input.addEventListener("blur", function () {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
     }
   };
-</script>
+  </script>
+  
 
   
     
