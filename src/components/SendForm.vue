@@ -124,9 +124,21 @@
       },
       formatPhone() {
         let value = this.phone.replace(/\D/g, "").substring(0, 11);
+
+        if (value.length === 0) {
+          this.phone = "";
+          return;
+        }
+
         if (!value.startsWith("7")) value = "7" + value;
-  
-        this.phone = `+7 (${value.substring(1, 4)}) ${value.substring(4, 7)}-${value.substring(7, 9)}-${value.substring(9, 11)}`.trim();
+
+        let formatted = `+7 (${value.substring(1, 4)}`;
+
+        if (value.length > 4) formatted += `) ${value.substring(4, 7)}`;
+        if (value.length > 7) formatted += `-${value.substring(7, 9)}`;
+        if (value.length > 9) formatted += `-${value.substring(9, 11)}`;
+
+        this.phone = formatted;
       },
       submitForm() {
         this.errorFields.selectedPrice = !this.selectedPrice;
@@ -137,9 +149,9 @@
         this.errorFields.street = !this.street;
         this.errorFields.entrance = !this.entrance;
         this.errorFields.floor = !this.floor;
-  
+
         if (Object.values(this.errorFields).some(error => error)) return;
-  
+
         const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
         console.log("Отправка формы с номером:", formattedPhone);
       },
