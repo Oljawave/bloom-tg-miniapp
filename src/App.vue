@@ -30,58 +30,43 @@ export default {
 };
 </script>
 
-<style scoped>
-body {
-  font-family: 'SF Pro', sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #fff !important;
-}
-
-html {
-  background-color: #fff !important;
-}
-
-.container {
-  width: 100%;
-  max-width: 390px;
-  padding: 20px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-}
-
-h2 {
-  font-size: 16px;
-  font-weight: 500;
-  text-transform: uppercase;
-  margin-bottom: 25px;
-  font-family: 'SF Pro', sans-serif;
-  align-self: flex-start;
-  margin-left: 20px;
-}
+<style>
 
 :root {
-  background-color: #fff !important;
+    color-scheme: light !important;
 }
 
-html, body {
-  background-color: #fff !important;
+html, body, #app {
+    background-color: #fff !important;
+    color: #000 !important; 
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 @media (prefers-color-scheme: dark) {
-    body {
-        background-color: #000;
+    html, body, #app {
+        background-color: #fff !important;
+        color: #000 !important;
     }
 }
 
-#app {
-    background-color: #fff !important;
+.container {
+    width: 100%;
+    max-width: 390px;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
-
+h2 {
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+    font-family: 'SF Pro', sans-serif;
+    align-self: flex-start;
+    margin-left: 20px;
+}
 </style>
