@@ -114,7 +114,7 @@
           floor: false,
           phone: false
         },
-        keyboardVisible: false,
+        userId: null,
         originalHeight: window.innerHeight
       };
     },
@@ -167,7 +167,7 @@
           floor: this.floor,
           phone: formattedPhone,
           comment: this.comment,
-          user_id: 1
+          user_id: this.userId
         };
 
         try {
@@ -195,11 +195,9 @@
             this.phone = "";
             this.comment = "";
 
-
             if (window.Telegram && window.Telegram.WebApp) {
               window.Telegram.WebApp.close();
             } else {
- 
               window.close();
             }
           } else {
@@ -217,16 +215,23 @@
         } else {
           document.body.style.paddingBottom = "0px";
         }
+      },
+      getTelegramUserId() {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
+          this.userId = window.Telegram.WebApp.initDataUnsafe.user.id;
+        }
       }
     },
     mounted() {
+      this.getTelegramUserId();
       window.visualViewport.addEventListener("resize", this.handleResize);
     },
     beforeUnmount() {
       window.visualViewport.removeEventListener("resize", this.handleResize);
     }
   };
-  </script>
+</script>
+
   
   
   
