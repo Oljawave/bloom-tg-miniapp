@@ -114,7 +114,7 @@
           floor: false,
           phone: false
         },
-        userId: null,
+        keyboardVisible: false,
         originalHeight: window.innerHeight
       };
     },
@@ -167,7 +167,7 @@
           floor: this.floor,
           phone: formattedPhone,
           comment: this.comment,
-          user_id: this.userId
+          user_id: 1
         };
 
         try {
@@ -184,18 +184,10 @@
           if (response.ok) {
             console.log("Заказ создан:", data);
             alert("Заказ успешно оформлен!");
-
-            this.selectedPrice = "";
-            this.selectedCity = "";
-            this.street = "";
-            this.building = "";
-            this.apartment = "";
-            this.entrance = "";
-            this.floor = "";
-            this.phone = "";
-            this.comment = "";
-
+            
+            
             if (window.Telegram && window.Telegram.WebApp) {
+              window.Telegram.WebApp.sendData(JSON.stringify(orderData));
               window.Telegram.WebApp.close();
             } else {
               window.close();
@@ -215,23 +207,16 @@
         } else {
           document.body.style.paddingBottom = "0px";
         }
-      },
-      getTelegramUserId() {
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.user) {
-          this.userId = window.Telegram.WebApp.initDataUnsafe.user.id;
-        }
       }
     },
     mounted() {
-      this.getTelegramUserId();
       window.visualViewport.addEventListener("resize", this.handleResize);
     },
     beforeUnmount() {
       window.visualViewport.removeEventListener("resize", this.handleResize);
     }
   };
-</script>
-
+  </script>
   
   
   
