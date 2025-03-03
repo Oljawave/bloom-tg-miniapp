@@ -180,19 +180,40 @@ export default {
 
           if (window.Telegram && window.Telegram.WebApp) {
             const payload = JSON.stringify({ success: true, user_id: this.userId });
-            
             console.log("📤 Отправка данных в Telegram:", payload);
             window.Telegram.WebApp.sendData(payload);
-            
             window.Telegram.WebApp.close();
           } else {
-            console.log("❌ Telegram WebApp не найден");
+            console.log("❌ Telegram WebApp не найден, отправляем сообщение напрямую");
+            await this.sendTelegramMessage("✅ Ваш заказ успешно оформлен!");
             window.close();
           }
         }
       } catch (error) {
         console.error("Ошибка сети:", error);
         alert("Ошибка соединения. Проверьте интернет или попробуйте позже.");
+      }
+    },
+    async sendTelegramMessage(text) {
+      const BOT_TOKEN = "7656620027:AAFMvmxiOqelHS3hC2IwsaWthlAg3DxRPmA";
+      const TELEGRAM_API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+      
+      try {
+        const response = await fetch(TELEGRAM_API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chat_id: this.userId,
+            text: text,
+            parse_mode: "Markdown",
+          }),
+        });
+        const data = await response.json();
+        console.log("✅ Сообщение отправлено в Telegram:", data);
+      } catch (error) {
+        console.error("❌ Ошибка отправки в Telegram:", error);
       }
     },
     handleResize() {
