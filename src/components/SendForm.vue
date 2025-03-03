@@ -175,19 +175,20 @@ export default {
         const data = await response.json();
 
         if (response.ok) {
-          console.log("Заказ создан:", data);
+          console.log("✅ Заказ успешно создан:", data);
           alert("✅ Заказ успешно оформлен!");
 
-          // 📩 Отправляем данные в Telegram для подтверждения заказа
           if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.sendData(JSON.stringify({ success: true, user_id: this.userId }));
+            const payload = JSON.stringify({ success: true, user_id: this.userId });
+            
+            console.log("📤 Отправка данных в Telegram:", payload);
+            window.Telegram.WebApp.sendData(payload);
+            
             window.Telegram.WebApp.close();
           } else {
+            console.log("❌ Telegram WebApp не найден");
             window.close();
           }
-        } else {
-          console.error("Ошибка сервера:", data.error);
-          alert(`Ошибка: ${data.error}`);
         }
       } catch (error) {
         console.error("Ошибка сети:", error);
