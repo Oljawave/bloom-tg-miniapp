@@ -75,7 +75,7 @@
   
   
   <script>
-    export default {
+  export default {
     props: {
       selectedDates: Array
     },
@@ -126,20 +126,15 @@
       formatPhone() {
         setTimeout(() => {
           let value = this.phone.replace(/\D/g, "").substring(0, 11);
-
           if (value.length === 0) {
             this.phone = "";
             return;
           }
-
           if (!value.startsWith("7")) value = "7" + value;
-
           let formatted = `+7 (${value.substring(1, 4)}`;
-
           if (value.length > 4) formatted += `) ${value.substring(4, 7)}`;
           if (value.length > 7) formatted += `-${value.substring(7, 9)}`;
           if (value.length > 9) formatted += `-${value.substring(9, 11)}`;
-
           this.phone = formatted;
         }, 10);
       },
@@ -152,11 +147,8 @@
         this.errorFields.street = !this.street;
         this.errorFields.entrance = !this.entrance;
         this.errorFields.floor = !this.floor;
-
         if (Object.values(this.errorFields).some(error => error)) return;
-
         const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
-
         const orderData = {
           selected_dates: this.selectedDates,
           price_range: this.selectedPrice.replace(" ₸", "").replace(" ", ""),
@@ -170,22 +162,16 @@
           comment: this.comment,
           user_id: this.userId
         };
-
         try {
           const response = await fetch("https://bloom-backend-production.up.railway.app/orders", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(orderData)
           });
-
           const data = await response.json();
-
           if (response.ok) {
             console.log("Заказ создан:", data);
             alert("Заказ успешно оформлен!");
-
             if (window.Telegram && window.Telegram.WebApp) {
               window.Telegram.WebApp.sendData(JSON.stringify(orderData));
               window.Telegram.WebApp.close();
@@ -208,14 +194,13 @@
           document.body.style.paddingBottom = "0px";
         }
       },
-      getUserIdFromTelegram() {
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
-          this.userId = window.Telegram.WebApp.initDataUnsafe.user?.id || null;
-        }
+      getUserId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        this.userId = urlParams.get("user_id") || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) || null;
       }
     },
     mounted() {
-      this.getUserIdFromTelegram();
+      this.getUserId();
       window.visualViewport.addEventListener("resize", this.handleResize);
     },
     beforeUnmount() {
@@ -223,6 +208,7 @@
     }
   };
   </script>
+  
   
   
   
