@@ -178,16 +178,19 @@ export default {
           console.log("✅ Заказ успешно создан:", data);
           alert("✅ Заказ успешно оформлен!");
 
-          if (window.Telegram && window.Telegram.WebApp) {
-            const payload = JSON.stringify({ success: true, user_id: this.userId });
-            console.log("📤 Отправка данных в Telegram:", payload);
-            window.Telegram.WebApp.sendData(payload);
-            window.Telegram.WebApp.close();
-          } else {
-            console.log("❌ Telegram WebApp не найден, отправляем сообщение напрямую");
-            await this.sendTelegramMessage("✅ Ваш заказ успешно оформлен!");
-            window.close();
-          }
+          setTimeout(() => {
+            if (window.Telegram && window.Telegram.WebApp) {
+              const payload = JSON.stringify({ success: true, user_id: this.userId });
+              console.log("📤 Отправка данных в Telegram:", payload);
+              window.Telegram.WebApp.sendData(payload);
+              window.Telegram.WebApp.close();
+            } else {
+              console.log("❌ Telegram WebApp не найден, отправляем сообщение напрямую");
+              this.sendTelegramMessage("✅ Ваш заказ успешно оформлен!").then(() => {
+                window.close();
+              });
+            }
+          }, 500);
         }
       } catch (error) {
         console.error("Ошибка сети:", error);

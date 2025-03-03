@@ -24,74 +24,94 @@
   </template>
   
   <script>
-  import { Icon } from '@iconify/vue';
-  import dayjs from 'dayjs';
-  import 'dayjs/locale/ru';
-  
-  dayjs.locale('ru');
-  
-  export default {
-    components: { Icon },
-    data() {
-      return {
-        currentDate: dayjs(),
-        weekdays: ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'],
-        selectedDates: [],
-        error: false
-      };
+import { Icon } from '@iconify/vue';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
+
+dayjs.locale('ru');
+
+export default {
+  components: { Icon },
+  data() {
+    return {
+      currentDate: dayjs(),
+      weekdays: ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'],
+      selectedDates: [],
+      error: false
+    };
+  },
+  computed: {
+    currentMonth() {
+      return this.currentDate.format('MMMM');
     },
-    computed: {
-      currentMonth() {
-        return this.currentDate.format('MMMM');
-      },
-      days() {
-        const startOfMonth = this.currentDate.startOf('month');
-        const endOfMonth = this.currentDate.endOf('month');
-        const today = dayjs().format('YYYY-MM-DD');
-        const startDay = (startOfMonth.day() + 6) % 7;
-        const totalDays = endOfMonth.date();
-        
-        return [
-          ...Array(startDay).fill(null),
-          ...[...Array(totalDays)].map((_, i) => {
-            const date = this.currentDate.format(`YYYY-MM-${String(i + 1).padStart(2, '0')}`);
-            return {
-              day: i + 1,
-              date,
-              isPast: date < today 
-            };
-          })
-        ];
+    days() {
+      const startOfMonth = this.currentDate.startOf('month');
+      const endOfMonth = this.currentDate.endOf('month');
+      const today = dayjs().format('YYYY-MM-DD');
+      const startDay = (startOfMonth.day() + 6) % 7;
+      const totalDays = endOfMonth.date();
+
+      return [
+        ...Array(startDay).fill(null),
+        ...[...Array(totalDays)].map((_, i) => {
+          const date = this.currentDate.format(`YYYY-MM-${String(i + 1).padStart(2, '0')}`);
+          return {
+            day: i + 1,
+            date,
+            isPast: date < today 
+          };
+        })
+      ];
+    }
+  },
+  methods: {
+    toggleDate(date) {
+      if (this.selectedDates.includes(date)) {
+        this.selectedDates = this.selectedDates.filter(d => d !== date);
+      } else {
+        this.selectedDates.push(date);
+      }
+      if (this.selectedDates.length > 0) {
+        this.error = false;
       }
     },
-    methods: {
-      toggleDate(date) {
-        if (this.selectedDates.includes(date)) {
-          this.selectedDates = this.selectedDates.filter(d => d !== date);
-        } else {
-          this.selectedDates.push(date);
-        }
-        if (this.selectedDates.length > 0) {
-          this.error = false;
-        }
-      },
-      confirmDates() {
-        if (this.selectedDates.length === 0) {
-          this.error = true;
-        } else {
-          console.log('Выбранные даты:', this.selectedDates);
-          this.$emit('datesSelected', this.selectedDates);
-        }
-      },
-      prevMonth() {
-        this.currentDate = this.currentDate.subtract(1, 'month');
-      },
-      nextMonth() {
-        this.currentDate = this.currentDate.add(1, 'month');
+    confirmDates() {
+      if (this.selectedDates.length === 0) {
+        this.error = true;
+      } else {
+        console.log('Выбранные даты:', this.selectedDates);
+        this.$emit('datesSelected', this.selectedDates);
+      }
+    },
+    prevMonth() {
+      this.currentDate = this.currentDate.subtract(1, 'month');
+    },
+    nextMonth() {
+      this.currentDate = this.currentDate.add(1, 'month');
+    },
+    adjustForKeyboard() {
+      if (window.visualViewport.height < window.innerHeight) {
+        document.body.style.paddingBottom = (window.innerHeight - window.visualViewport.height) + "px";
+      } else {
+        document.body.style.paddingBottom = "0px";
       }
     }
-  };
-  </script>
+  },
+  mounted() {
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      setTimeout(() => {
+        window.Telegram.WebApp.expand();
+      }, 100);
+    }
+    window.visualViewport.addEventListener("resize", this.adjustForKeyboard);
+  },
+  beforeUnmount() {
+    window.visualViewport.removeEventListener("resize", this.adjustForKeyboard);
+  }
+};
+</script>
+
   
   <style scoped>
   .datepicker-container {

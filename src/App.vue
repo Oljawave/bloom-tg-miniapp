@@ -39,10 +39,13 @@ export default {
     },
   },
   mounted() {
-    if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.expand();
-    }
-    window.visualViewport.addEventListener("resize", this.adjustForKeyboard);
+      if (window.Telegram && window.Telegram.WebApp) {
+          window.Telegram.WebApp.ready();
+          setTimeout(() => {
+              window.Telegram.WebApp.expand();
+          }, 100);
+      }
+      window.visualViewport.addEventListener("resize", this.adjustForKeyboard);
   },
   beforeUnmount() {
     window.visualViewport.removeEventListener("resize", this.adjustForKeyboard);
