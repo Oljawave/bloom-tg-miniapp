@@ -75,7 +75,7 @@
   
   
   <script>
-  export default {
+    export default {
     props: {
       selectedDates: Array
     },
@@ -98,6 +98,7 @@
         floor: "",
         phone: "",
         comment: "",
+        userId: null,
         cities: [
           "Караганда", "Алматы", "Астана", "Шымкент", "Актобе", "Тараз",
           "Павлодар", "Оскемен", "Семей", "Атырау", "Костанай",
@@ -125,20 +126,20 @@
       formatPhone() {
         setTimeout(() => {
           let value = this.phone.replace(/\D/g, "").substring(0, 11);
-  
+
           if (value.length === 0) {
             this.phone = "";
             return;
           }
-  
+
           if (!value.startsWith("7")) value = "7" + value;
-  
+
           let formatted = `+7 (${value.substring(1, 4)}`;
-  
+
           if (value.length > 4) formatted += `) ${value.substring(4, 7)}`;
           if (value.length > 7) formatted += `-${value.substring(7, 9)}`;
           if (value.length > 9) formatted += `-${value.substring(9, 11)}`;
-  
+
           this.phone = formatted;
         }, 10);
       },
@@ -167,7 +168,7 @@
           floor: this.floor,
           phone: formattedPhone,
           comment: this.comment,
-          user_id: 1
+          user_id: this.userId
         };
 
         try {
@@ -184,8 +185,7 @@
           if (response.ok) {
             console.log("Заказ создан:", data);
             alert("Заказ успешно оформлен!");
-            
-            
+
             if (window.Telegram && window.Telegram.WebApp) {
               window.Telegram.WebApp.sendData(JSON.stringify(orderData));
               window.Telegram.WebApp.close();
@@ -207,9 +207,15 @@
         } else {
           document.body.style.paddingBottom = "0px";
         }
+      },
+      getUserIdFromTelegram() {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
+          this.userId = window.Telegram.WebApp.initDataUnsafe.user?.id || null;
+        }
       }
     },
     mounted() {
+      this.getUserIdFromTelegram();
       window.visualViewport.addEventListener("resize", this.handleResize);
     },
     beforeUnmount() {
