@@ -75,139 +75,147 @@
   
   
   <script>
-  export default {
-    props: {
-      selectedDates: Array
-    },
-    computed: {
-      formattedDates() {
-        return this.selectedDates.map(date => {
-          const [year, month, day] = date.split("-");
-          return `${day}.${month}`;
-        }).join(", ");
-      }
-    },
-    data() {
-      return {
-        selectedPrice: "",
-        selectedCity: "",
-        street: "",
-        building: "",
-        apartment: "",
-        entrance: "",
-        floor: "",
-        phone: "",
-        comment: "",
-        userId: null,
-        cities: [
-          "Караганда", "Алматы", "Астана", "Шымкент", "Актобе", "Тараз",
-          "Павлодар", "Оскемен", "Семей", "Атырау", "Костанай",
-          "Кызылорда", "Орал", "Петропавловск", "Актау", "Темиртау",
-          "Туркестан", "Кокшетау", "Талдыкорган"
-        ],
-        errorFields: {
-          selectedPrice: false,
-          selectedCity: false,
-          street: false,
-          building: false,
-          apartment: false,
-          entrance: false,
-          floor: false,
-          phone: false
-        },
-        keyboardVisible: false,
-        originalHeight: window.innerHeight
-      };
-    },
-    methods: {
-      validateNumber(field) {
-        this[field] = this[field].replace(/\D/g, "");
-      },
-      formatPhone() {
-        setTimeout(() => {
-          let value = this.phone.replace(/\D/g, "").substring(0, 11);
-          if (value.length === 0) {
-            this.phone = "";
-            return;
-          }
-          if (!value.startsWith("7")) value = "7" + value;
-          let formatted = `+7 (${value.substring(1, 4)}`;
-          if (value.length > 4) formatted += `) ${value.substring(4, 7)}`;
-          if (value.length > 7) formatted += `-${value.substring(7, 9)}`;
-          if (value.length > 9) formatted += `-${value.substring(9, 11)}`;
-          this.phone = formatted;
-        }, 10);
-      },
-      async submitForm() {
-        this.errorFields.selectedPrice = !this.selectedPrice;
-        this.errorFields.selectedCity = !this.selectedCity;
-        this.errorFields.phone = !this.phone || this.phone.length !== 18;
-        this.errorFields.apartment = !this.apartment;
-        this.errorFields.building = !this.building;
-        this.errorFields.street = !this.street;
-        this.errorFields.entrance = !this.entrance;
-        this.errorFields.floor = !this.floor;
-        if (Object.values(this.errorFields).some(error => error)) return;
-        const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
-        const orderData = {
-          selected_dates: this.selectedDates,
-          price_range: this.selectedPrice.replace(" ₸", "").replace(" ", ""),
-          city: this.selectedCity,
-          street: this.street,
-          building: this.building,
-          apartment: this.apartment,
-          entrance: this.entrance,
-          floor: this.floor,
-          phone: formattedPhone,
-          comment: this.comment,
-          user_id: this.userId
-        };
-        try {
-          const response = await fetch("https://bloom-backend-production.up.railway.app/orders", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(orderData)
-          });
-          const data = await response.json();
-          if (response.ok) {
-            console.log("Заказ создан:", data);
-            alert("Заказ успешно оформлен!");
-            if (window.Telegram && window.Telegram.WebApp) {
-              window.Telegram.WebApp.sendData(JSON.stringify(orderData));
-              window.Telegram.WebApp.close();
-            } else {
-              window.close();
-            }
-          } else {
-            console.error("Ошибка сервера:", data.error);
-            alert(`Ошибка: ${data.error}`);
-          }
-        } catch (error) {
-          console.error("Ошибка сети:", error);
-          alert("Ошибка соединения. Проверьте интернет или попробуйте позже.");
-        }
-      },
-      handleResize() {
-        if (window.visualViewport.height < this.originalHeight) {
-          document.body.style.paddingBottom = (this.originalHeight - window.visualViewport.height) + "px";
-        } else {
-          document.body.style.paddingBottom = "0px";
-        }
-      },
-      getUserId() {
-        const urlParams = new URLSearchParams(window.location.search);
-        this.userId = urlParams.get("user_id") || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) || null;
-      }
-    },
-    mounted() {
-      this.getUserId();
-      window.visualViewport.addEventListener("resize", this.handleResize);
-    },
-    beforeUnmount() {
-      window.visualViewport.removeEventListener("resize", this.handleResize);
+export default {
+  props: {
+    selectedDates: Array
+  },
+  computed: {
+    formattedDates() {
+      return this.selectedDates.map(date => {
+        const [year, month, day] = date.split("-");
+        return `${day}.${month}`;
+      }).join(", ");
     }
-  };
-  </script>
+  },
+  data() {
+    return {
+      selectedPrice: "",
+      selectedCity: "",
+      street: "",
+      building: "",
+      apartment: "",
+      entrance: "",
+      floor: "",
+      phone: "",
+      comment: "",
+      userId: null,
+      cities: [
+        "Караганда", "Алматы", "Астана", "Шымкент", "Актобе", "Тараз",
+        "Павлодар", "Оскемен", "Семей", "Атырау", "Костанай",
+        "Кызылорда", "Орал", "Петропавловск", "Актау", "Темиртау",
+        "Туркестан", "Кокшетау", "Талдыкорган"
+      ],
+      errorFields: {
+        selectedPrice: false,
+        selectedCity: false,
+        street: false,
+        building: false,
+        apartment: false,
+        entrance: false,
+        floor: false,
+        phone: false
+      },
+      keyboardVisible: false,
+      originalHeight: window.innerHeight
+    };
+  },
+  methods: {
+    validateNumber(field) {
+      this[field] = this[field].replace(/\D/g, "");
+    },
+    formatPhone() {
+      setTimeout(() => {
+        let value = this.phone.replace(/\D/g, "").substring(0, 11);
+        if (value.length === 0) {
+          this.phone = "";
+          return;
+        }
+        if (!value.startsWith("7")) value = "7" + value;
+        let formatted = `+7 (${value.substring(1, 4)}`;
+        if (value.length > 4) formatted += `) ${value.substring(4, 7)}`;
+        if (value.length > 7) formatted += `-${value.substring(7, 9)}`;
+        if (value.length > 9) formatted += `-${value.substring(9, 11)}`;
+        this.phone = formatted;
+      }, 10);
+    },
+    async submitForm() {
+      this.errorFields.selectedPrice = !this.selectedPrice;
+      this.errorFields.selectedCity = !this.selectedCity;
+      this.errorFields.phone = !this.phone || this.phone.length !== 18;
+      this.errorFields.apartment = !this.apartment;
+      this.errorFields.building = !this.building;
+      this.errorFields.street = !this.street;
+      this.errorFields.entrance = !this.entrance;
+      this.errorFields.floor = !this.floor;
+
+      if (Object.values(this.errorFields).some(error => error)) return;
+
+      const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
+      const orderData = {
+        selected_dates: this.selectedDates,
+        price_range: this.selectedPrice.replace(" ₸", "").replace(" ", ""),
+        city: this.selectedCity,
+        street: this.street,
+        building: this.building,
+        apartment: this.apartment,
+        entrance: this.entrance,
+        floor: this.floor,
+        phone: formattedPhone,
+        comment: this.comment,
+        user_id: this.userId
+      };
+
+      try {
+        const response = await fetch("https://bloom-backend-production.up.railway.app/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderData)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log("Заказ создан:", data);
+          alert("✅ Заказ успешно оформлен!");
+
+          // 📩 Отправляем данные в Telegram для подтверждения заказа
+          if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.sendData(JSON.stringify({ success: true, user_id: this.userId }));
+            window.Telegram.WebApp.close();
+          } else {
+            window.close();
+          }
+        } else {
+          console.error("Ошибка сервера:", data.error);
+          alert(`Ошибка: ${data.error}`);
+        }
+      } catch (error) {
+        console.error("Ошибка сети:", error);
+        alert("Ошибка соединения. Проверьте интернет или попробуйте позже.");
+      }
+    },
+    handleResize() {
+      if (window.visualViewport.height < this.originalHeight) {
+        document.body.style.paddingBottom = (this.originalHeight - window.visualViewport.height) + "px";
+      } else {
+        document.body.style.paddingBottom = "0px";
+      }
+    },
+    getUserId() {
+      const urlParams = new URLSearchParams(window.location.search);
+      this.userId = urlParams.get("user_id") || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) || null;
+    }
+  },
+  mounted() {
+    this.getUserId();
+    window.visualViewport.addEventListener("resize", this.handleResize);
+  },
+  beforeUnmount() {
+    window.visualViewport.removeEventListener("resize", this.handleResize);
+  }
+};
+</script>
+
   
   
   
