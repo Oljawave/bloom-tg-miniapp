@@ -39,6 +39,9 @@ export default {
     },
   },
   mounted() {
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.expand();
+    }
     window.visualViewport.addEventListener("resize", this.adjustForKeyboard);
   },
   beforeUnmount() {
@@ -46,6 +49,7 @@ export default {
   },
 };
 </script>
+
 
 <style>
 :root {
