@@ -192,7 +192,7 @@ export default {
   }
   
   .days span.disabled {
-    color: grey;
+    color: rgb(200, 200, 200);
     pointer-events: none;
   }
   
@@ -220,6 +220,6 @@ export default {
     color: black;
     box-sizing: border-box;
   }
-  
+
   </style>
   
