@@ -36,25 +36,22 @@
         <div class="input-group">
           <label :class="{ active: building, label: true }">ДОМ/ЗДАНИЕ</label>
           <input v-model="building" type="number" @input="validateNumber('building')" :class="{ 'error-border': errorFields.building }" />
-          <p v-if="errorFields.building" class="error-message">Пожалуйста, введите дом/здание</p>
+          <p v-if="errorFields.building" class="error-message">Пожалуйста, введите дом</p>
         </div>
         <div class="input-group">
           <label :class="{ active: apartment, label: true }">КВАРТИРА/ОФИС</label>
-          <input v-model="apartment" type="number" @input="validateNumber('apartment')" :class="{ 'error-border': errorFields.apartment }" />
-          <p v-if="errorFields.apartment" class="error-message">Пожалуйста, введите квартиру/офис</p>
+          <input v-model="apartment" type="number" />
         </div>
       </div>
   
       <div class="row">
         <div class="input-group">
           <label :class="{ active: entrance, label: true }">ПОДЪЕЗД</label>
-          <input v-model="entrance" type="number" @input="validateNumber('entrance')" :class="{ 'error-border': errorFields.entrance }" />
-          <p v-if="errorFields.entrance" class="error-message">Пожалуйста, введите подъезд</p>
+          <input v-model="entrance" type="number" />
         </div>
         <div class="input-group">
           <label :class="{ active: floor, label: true }">ЭТАЖ</label>
-          <input v-model="floor" type="number" @input="validateNumber('floor')" :class="{ 'error-border': errorFields.floor }" />
-          <p v-if="errorFields.floor" class="error-message">Пожалуйста, введите этаж</p>
+          <input v-model="floor" type="number" />
         </div>
       </div>
   
@@ -241,86 +238,120 @@ export default {
 };
 </script>
 
-  
-  
-  
-  
-  
+    
+<style scoped>
+body {
+  font-family: 'SF Pro', sans-serif;
+}
 
-  
-    
-    <style scoped>
-  
-    body {
-      font-family: 'SF Pro', sans-serif;
-    }
-  
-    .form-container {
-      width: 100%;
-      max-width: 390px;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-  
-    .input-group {
-    position: relative;
-    margin-top: 25px;
-    width: 100%;
+.form-container {
+  width: 100%;
+  max-width: 390px;
+  padding: 20px;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+.input-group {
+  position: relative;
+  margin-top: 25px;
+  width: 100%;
+}
+
+.label {
+  font-family: 'SF Pro', sans-serif;
+  position: absolute;
+  left: 0;
+  top: 8px;
+  font-size: 14px;
+  color: #888;
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+.label.active {
+  top: -14px;
+  font-size: 12px;
+  color: #000;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 1px solid #000;
+  font-size: 14px;
+  background-color: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-bottom: 1px solid #000;
+}
+
+.error-message {
+  font-size: 12px;
+  color: #ff4d4f;
+  margin-top: 5px;
+  font-family: 'SF Pro', sans-serif;
+  z-index: 1;
+  position: relative;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row input {
+  flex: 1;
+}
+
+button {
+  margin-top: 50px;
+  padding: 10px;
+  border: 1px solid black;
+  background: transparent;
+  font-weight: 500;
+  text-transform: uppercase;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .form-container {
+    padding: 10px;
   }
-  
+
+  .input-group {
+    margin-top: 15px;
+  }
+
   .label {
-    font-family: 'SF Pro', sans-serif;
-    position: absolute;
-    left: 0;
-    top: 8px; 
-    font-size: 14px;
-    color: #888;
-    pointer-events: none;
-    transition: all 0.2s ease;
+    font-size: 12px;
+    top: 5px;
   }
-  
+
   .label.active {
-    top: -14px;
-    font-size: 12px;
-    color: #000;
+    top: -10px;
+    font-size: 10px;
   }
-  
+
   input, select {
-    width: 100%;
-    padding: 12px 0;
-    border: none;
-    border-bottom: 1px solid #000;
-    font-size: 14px;
-    background-color: transparent;
-  }
-  input:focus, select:focus {
-    outline: none;
-    border-bottom: 1px solid #000;
-  }
-  .error-message {
+    padding: 8px 0;
     font-size: 12px;
-    color: #ff4d4f;
-    margin-top: 5px;
-    font-family: 'SF Pro', sans-serif;
   }
-    .row {
-      display: flex;
-      gap: 10px;
-    }
-    .row input {
-      flex: 1;
-    }
-    button {
-      margin-top: 50px;
-      padding: 10px;
-      border: 1px solid black;
-      background: transparent;
-      font-weight: 500;
-      text-transform: uppercase;
-      cursor: pointer;
-      width: 100%;
-    }
-  
-    
-    </style>
+
+  button {
+    margin-top: 30px;
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+</style>
     
