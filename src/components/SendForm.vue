@@ -32,26 +32,26 @@
         <p v-if="errorFields.street" class="error-message">Пожалуйста, введите улицу</p>
       </div>
       
-      <div class="row">
+        <div class="row">
         <div class="input-group">
           <label :class="{ active: building, label: true }">ДОМ/ЗДАНИЕ</label>
-          <input v-model="building" type="number" @input="validateNumber('building')" :class="{ 'error-border': errorFields.building }" />
+          <input v-model="building" type="text" @input="validateNumber('building')" :class="{ 'error-border': errorFields.building }" />
           <p v-if="errorFields.building" class="error-message">Пожалуйста, введите дом</p>
         </div>
         <div class="input-group">
           <label :class="{ active: apartment, label: true }">КВАРТИРА/ОФИС</label>
-          <input v-model="apartment" type="number" />
+          <input v-model="apartment" type="number" @input="validateNumber('apartment')" />
         </div>
       </div>
-  
+
       <div class="row">
         <div class="input-group">
           <label :class="{ active: entrance, label: true }">ПОДЪЕЗД</label>
-          <input v-model="entrance" type="number" />
+          <input v-model="entrance" type="number" @input="validateNumber('entrance')" />
         </div>
         <div class="input-group">
           <label :class="{ active: floor, label: true }">ЭТАЖ</label>
-          <input v-model="floor" type="number" />
+          <input v-model="floor" type="number" @input="validateNumber('floor')" />
         </div>
       </div>
   
@@ -118,8 +118,16 @@ export default {
   },
   methods: {
     validateNumber(field) {
-      this[field] = this[field].replace(/\D/g, "");
-    },
+  if (field === 'building') {
+    this[field] = this[field].replace(/[^0-9а-яА-Яa-zA-Z]/g, ''); 
+
+
+    const match = this[field].match(/^(\d+)([а-яА-Яa-zA-Z]?)$/);
+    this[field] = match ? match[0] : '';
+  } else {
+    this[field] = this[field].replace(/\D/g, '');
+  }
+},
     formatPhone() {
       setTimeout(() => {
         let value = this.phone.replace(/\D/g, "").substring(0, 11);
