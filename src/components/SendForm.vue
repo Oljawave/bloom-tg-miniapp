@@ -40,18 +40,18 @@
         </div>
         <div class="input-group">
           <label :class="{ active: apartment, label: true }">КВАРТИРА/ОФИС</label>
-          <input v-model="apartment" type="number" @input="validateNumber('apartment')" inputmode="numeric" />
+          <input v-model="apartment" type="text" inputmode="decimal" pattern="[0-9]*" @input="validateNumber('apartment')" />
         </div>
       </div>
 
       <div class="row">
         <div class="input-group">
           <label :class="{ active: entrance, label: true }">ПОДЪЕЗД</label>
-          <input v-model="entrance" type="number" @input="validateNumber('entrance')" inputmode="numeric" />
+          <input v-model="entrance" type="text" inputmode="decimal" pattern="[0-9]*" @input="validateNumber('entrance')" />
         </div>
         <div class="input-group">
           <label :class="{ active: floor, label: true }">ЭТАЖ</label>
-          <input v-model="floor" type="number" @input="validateNumber('floor')" inputmode="numeric" />
+          <input v-model="floor" type="text" inputmode="decimal" pattern="[0-9]*" @input="validateNumber('floor')" />
         </div>
       </div>
   
