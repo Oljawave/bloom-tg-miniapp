@@ -217,6 +217,9 @@ export default {
     text-transform: uppercase;
     cursor: pointer;
     width: 100%;
+    color: black;
+    box-sizing: border-box;
   }
+  
   </style>
   

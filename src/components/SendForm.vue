@@ -286,6 +286,11 @@ input, select {
   -moz-appearance: none;
   appearance: none;
   border-radius: 0;
+  color: black;
+}
+
+select option {
+  color: black;
 }
 
 input:focus, select:focus {
