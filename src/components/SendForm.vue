@@ -118,16 +118,16 @@ export default {
   },
   methods: {
     validateNumber(field) {
-  if (field === 'building') {
-    this[field] = this[field].replace(/[^0-9а-яА-Яa-zA-Z]/g, ''); 
+      if (field === 'building') {
+        this[field] = this[field].replace(/[^0-9а-яА-Яa-zA-Z]/g, ''); 
 
 
-    const match = this[field].match(/^(\d+)([а-яА-Яa-zA-Z]?)$/);
-    this[field] = match ? match[0] : '';
-  } else {
-    this[field] = this[field].replace(/\D/g, '');
-  }
-},
+        const match = this[field].match(/^(\d+)([а-яА-Яa-zA-Z]?)$/);
+        this[field] = match ? match[0] : '';
+      } else {
+        this[field] = this[field].replace(/\D/g, '');
+      }
+    },
     formatPhone() {
       setTimeout(() => {
         let value = this.phone.replace(/\D/g, "").substring(0, 11);
