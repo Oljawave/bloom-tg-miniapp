@@ -35,7 +35,7 @@
       <div class="row">
         <div class="input-group">
           <label :class="{ active: building, label: true }">ДОМ/ЗДАНИЕ</label>
-          <input v-model="building" type="tel" inputmode="numeric" pattern="[0-9]*" @input="validateNumber('building')" :class="{ 'error-border': errorFields.building }" />
+          <input v-model="building" type="number" @input="validateNumber('building')" :class="{ 'error-border': errorFields.building }" />
           <p v-if="errorFields.building" class="error-message">Пожалуйста, введите дом</p>
         </div>
         <div class="input-group">
