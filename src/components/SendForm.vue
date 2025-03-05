@@ -320,6 +320,7 @@ button {
   text-transform: uppercase;
   cursor: pointer;
   width: 100%;
+  color: black;
   box-sizing: border-box;
 }
 
@@ -329,7 +330,7 @@ button {
   }
 
   .input-group {
-    margin-top: 15px;
+    margin-top: 25px;
   }
 
   .label {
