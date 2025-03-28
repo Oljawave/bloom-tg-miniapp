@@ -66,7 +66,10 @@
         <input v-model="comment" type="text" />
       </div>
       
-      <button @click="submitForm">ПОДТВЕРДИТЬ</button>
+      <button @click="submitForm" :disabled="isSubmitting" class="confirm-btn">
+        {{ isSubmitting ? "ОТПРАВКА..." : "ПОДТВЕРДИТЬ" }}
+      </button>
+
     </div>
   </template>
   
@@ -113,6 +116,7 @@ export default {
         phone: false
       },
       keyboardVisible: false,
+      isSubmitting: false,
       originalHeight: window.innerHeight
     };
   },
@@ -144,6 +148,10 @@ export default {
       }, 10);
     },
     async submitForm() {
+
+      if (this.isSubmitting) return;
+      this.isSubmitting = true;
+
       this.errorFields.selectedPrice = !this.selectedPrice;
       this.errorFields.selectedCity = !this.selectedCity;
       this.errorFields.phone = !this.phone || this.phone.length !== 18;
@@ -153,7 +161,10 @@ export default {
       this.errorFields.entrance = !this.entrance;
       this.errorFields.floor = !this.floor;
 
-      if (Object.values(this.errorFields).some(error => error)) return;
+      if (Object.values(this.errorFields).some(error => error)) {
+        this.isSubmitting = false;
+        return;
+      }
 
       const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
       const orderData = {
@@ -177,29 +188,28 @@ export default {
           body: JSON.stringify(orderData)
         });
 
+        console.log("Отправляем:", JSON.stringify(orderData));
         const data = await response.json();
 
         if (response.ok) {
           console.log("✅ Заказ успешно создан:", data);
-          alert("✅ Заказ успешно оформлен!");
+          this.$emit("success");
 
           setTimeout(() => {
             if (window.Telegram && window.Telegram.WebApp) {
               const payload = JSON.stringify({ success: true, user_id: this.userId });
               console.log("📤 Отправка данных в Telegram:", payload);
               window.Telegram.WebApp.sendData(payload);
-              window.Telegram.WebApp.close();
             } else {
               console.log("❌ Telegram WebApp не найден, отправляем сообщение напрямую");
-              this.sendTelegramMessage("✅ Ваш заказ успешно оформлен!").then(() => {
-                window.close();
-              });
+              this.sendTelegramMessage("✅ Ваш заказ успешно оформлен!");
             }
           }, 500);
         }
       } catch (error) {
         console.error("Ошибка сети:", error);
         alert("Ошибка соединения. Проверьте интернет или попробуйте позже.");
+        this.isSubmitting = false;
       }
     },
     async sendTelegramMessage(text) {

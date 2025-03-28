@@ -1,23 +1,22 @@
 <template>
   <div class="container" :style="{ marginTop: containerMargin }">
-    <h2>ОФОРМЛЕНИЕ ПОДПИСКИ 🌸</h2>
-    <DatePicker v-if="!datesSelected" @datesSelected="handleDatesChosen" />
-    <SendForm v-else :selected-dates="selectedDates" />
+    <h2 class="sticky-title">ОФОРМЛЕНИЕ ПОДПИСКИ 🌸</h2>
+    <DatePicker v-if="step === 'datePicker'" @datesSelected="handleDatesChosen" />
+    <SendForm v-else-if="step === 'sendForm'" :selected-dates="selectedDates" @success="step = 'successMessage'" />
+    <SuccessMessage v-else @reset="resetProcess" />
   </div>
 </template>
 
 <script>
 import DatePicker from "@/components/DatePicker.vue";
 import SendForm from "@/components/SendForm.vue";
+import SuccessMessage from "@/components/SuccessMessage.vue";
 
 export default {
-  components: {
-    DatePicker,
-    SendForm,
-  },
+  components: { DatePicker, SendForm, SuccessMessage },
   data() {
     return {
-      datesSelected: false,
+      step: "datePicker",
       selectedDates: [],
       containerMargin: "0px",
     };
@@ -25,33 +24,31 @@ export default {
   methods: {
     handleDatesChosen(dates) {
       this.selectedDates = dates;
-      this.datesSelected = true;
+      this.step = "sendForm";
+    },
+    resetProcess() {
+      this.selectedDates = [];
+      this.step = "datePicker";
     },
     adjustForKeyboard() {
       const viewportHeight = window.visualViewport.height;
       const windowHeight = window.innerHeight;
-
-      if (viewportHeight < windowHeight) {
-        this.containerMargin = `-${windowHeight - viewportHeight}px`;
-      } else {
-        this.containerMargin = "0px";
-      }
+      this.containerMargin = viewportHeight < windowHeight ? `-${windowHeight - viewportHeight}px` : "0px";
     },
   },
   mounted() {
-      if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.ready();
-          setTimeout(() => {
-              window.Telegram.WebApp.expand();
-          }, 100);
-      }
-      window.visualViewport.addEventListener("resize", this.adjustForKeyboard);
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.ready();
+      setTimeout(() => window.Telegram.WebApp.expand(), 100);
+    }
+    window.visualViewport.addEventListener("resize", this.adjustForKeyboard);
   },
   beforeUnmount() {
     window.visualViewport.removeEventListener("resize", this.adjustForKeyboard);
   },
 };
 </script>
+
 
 
 <style>
@@ -88,6 +85,20 @@ h2 {
   margin-bottom: 25px;
   font-family: "SF Pro", sans-serif;
   text-align: center;
+}
+
+.sticky-title {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: white;
+  padding: 15px 0;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-family: "SF Pro", sans-serif;
 }
 
 @media (min-width: 500px) {
