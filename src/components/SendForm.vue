@@ -1,80 +1,79 @@
 <template>
-    <div class="form-container">
-      <div class="input-group">
-        <label :class="{ active: formattedDates, label: true }">ВЫБРАННЫЕ ДАТЫ</label>
-        <input type="text" :value="formattedDates" readonly />
-      </div>
-      
-      <div class="input-group">
-        <label :class="{ active: selectedPrice, label: true }">ВЫБЕРИТЕ ЦЕНОВОЙ ДИАПАЗОН</label>
-        <select v-model="selectedPrice" required :class="{ 'error-border': errorFields.selectedPrice }">
-          <option disabled value=""></option>
-          <option>5000 ₸ - 10000 ₸</option>
-          <option>10000 ₸ - 15000 ₸</option>
-          <option>15000 ₸ - 20000 ₸</option>
-          <option>20000 ₸ +</option>
-        </select>
-        <p v-if="errorFields.selectedPrice" class="error-message">Пожалуйста, выберите ценовой диапазон</p>
-      </div>
-      
-      <div class="input-group">
-        <label :class="{ active: selectedCity, label: true }">ВЫБЕРИТЕ ГОРОД</label>
-        <select v-model="selectedCity" required :class="{ 'error-border': errorFields.selectedCity }">
-          <option disabled value=""></option>
-          <option v-for="city in cities" :key="city">{{ city }}</option>
-        </select>
-        <p v-if="errorFields.selectedCity" class="error-message">Пожалуйста, выберите город</p>
-      </div>
-      
-      <div class="input-group">
-        <label :class="{ active: street, label: true }">УЛИЦА</label>
-        <input v-model="street" type="text" :class="{ 'error-border': errorFields.street }" />
-        <p v-if="errorFields.street" class="error-message">Пожалуйста, введите улицу</p>
-      </div>
-      
-        <div class="row">
-        <div class="input-group">
-          <label :class="{ active: building, label: true }">ДОМ/ЗДАНИЕ</label>
-          <input v-model="building" type="text" @input="validateNumber('building')" :class="{ 'error-border': errorFields.building }" />
-          <p v-if="errorFields.building" class="error-message">Пожалуйста, введите дом</p>
-        </div>
-        <div class="input-group">
-            <label :class="{ active: apartment, label: true }">КВАРТИРА/ОФИС</label>
-            <input v-model="apartment" type="text" inputmode="decimal" pattern="[0-9]*" @input="validateNumber('apartment')" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="input-group">
-            <label :class="{ active: entrance, label: true }">ПОДЪЕЗД</label>
-            <input v-model="entrance" type="text" inputmode="decimal" pattern="[0-9]*" @input="validateNumber('entrance')" />
-          </div>
-          <div class="input-group">
-            <label :class="{ active: floor, label: true }">ЭТАЖ</label>
-            <input v-model="floor" type="text" inputmode="decimal" pattern="[0-9]*" @input="validateNumber('floor')" />
-          </div>
-        </div>
-  
-      <div class="input-group">
-        <label :class="{ active: phone, label: true }">ВВЕДИТЕ НОМЕР ТЕЛЕФОНА</label>
-        <input v-model="phone" type="tel" @input="formatPhone" :class="{ 'error-border': errorFields.phone }" />
-        <p v-if="errorFields.phone" class="error-message">Пожалуйста, введите номер телефона</p>
-      </div>
-      
-      <div class="input-group">
-        <label :class="{ active: comment, label: true }">КОММЕНТАРИЙ К ДОСТАВКЕ</label>
-        <input v-model="comment" type="text" />
-      </div>
-      
-      <button @click="submitForm" :disabled="isSubmitting" class="confirm-btn">
-        {{ isSubmitting ? "ОТПРАВКА..." : "ПОДТВЕРДИТЬ" }}
-      </button>
-
+  <div class="form-container">
+    <div class="input-group">
+      <label :class="{ active: formattedDates, label: true }">ВЫБРАННЫЕ ДАТЫ</label>
+      <input type="text" :value="formattedDates" readonly />
     </div>
-  </template>
-  
-  
-  <script>
+    
+    <div class="input-group">
+      <label :class="{ active: selectedPrice, label: true }">ВЫБЕРИТЕ ЦЕНОВОЙ ДИАПАЗОН</label>
+      <select v-model="selectedPrice" required :class="{ 'error-border': errorFields.selectedPrice }">
+        <option disabled value=""></option>
+        <option>5000 ₸ - 10000 ₸</option>
+        <option>10000 ₸ - 15000 ₸</option>
+        <option>15000 ₸ - 20000 ₸</option>
+        <option>20000 ₸ +</option>
+      </select>
+      <p v-if="errorFields.selectedPrice" class="error-message">Пожалуйста, выберите ценовой диапазон</p>
+    </div>
+    
+    <div class="input-group">
+      <label :class="{ active: selectedCity, label: true }">ВЫБЕРИТЕ ГОРОД</label>
+      <select v-model="selectedCity" required :class="{ 'error-border': errorFields.selectedCity }">
+        <option disabled value=""></option>
+        <option v-for="city in cities" :key="city">{{ city }}</option>
+      </select>
+      <p v-if="errorFields.selectedCity" class="error-message">Пожалуйста, выберите город</p>
+    </div>
+    
+    <div class="input-group">
+      <label :class="{ active: street, label: true }">УЛИЦА</label>
+      <input v-model="street" type="text" :class="{ 'error-border': errorFields.street }" />
+      <p v-if="errorFields.street" class="error-message">Пожалуйста, введите улицу</p>
+    </div>
+    
+    <div class="row">
+      <div class="input-group">
+        <label :class="{ active: building, label: true }">ДОМ/ЗДАНИЕ</label>
+        <input v-model="building" type="text" @input="validateNumber('building')" :class="{ 'error-border': errorFields.building }" />
+        <p v-if="errorFields.building" class="error-message">Пожалуйста, введите дом</p>
+      </div>
+      <div class="input-group">
+        <label :class="{ active: apartment, label: true }">КВАРТИРА/ОФИС</label>
+        <input v-model="apartment" type="text" inputmode="decimal" pattern="[0-9]*" @input="validateNumber('apartment')" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="input-group">
+        <label :class="{ active: entrance, label: true }">ПОДЪЕЗД</label>
+        <input v-model="entrance" type="text" inputmode="decimal" pattern="[0-9]*" @input="validateNumber('entrance')" />
+      </div>
+      <div class="input-group">
+        <label :class="{ active: floor, label: true }">ЭТАЖ</label>
+        <input v-model="floor" type="text" inputmode="decimal" pattern="[0-9]*" @input="validateNumber('floor')" />
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label :class="{ active: phone, label: true }">ВВЕДИТЕ НОМЕР ТЕЛЕФОНА</label>
+      <input v-model="phone" type="tel" @input="formatPhone" :class="{ 'error-border': errorFields.phone }" />
+      <p v-if="errorFields.phone" class="error-message">Пожалуйста, введите номер телефона</p>
+    </div>
+    
+    <div class="input-group">
+      <label :class="{ active: comment, label: true }">КОММЕНТАРИЙ К ДОСТАВКЕ</label>
+      <input v-model="comment" type="text" />
+    </div>
+    
+    <button @click="submitForm" :disabled="isSubmitting" class="confirm-btn">
+      {{ isSubmitting ? "ОТПРАВКА..." : "ПОДТВЕРДИТЬ" }}
+    </button>
+
+  </div>
+</template>
+
+<script>
 export default {
   props: {
     selectedDates: Array
@@ -100,10 +99,11 @@ export default {
       comment: "",
       userId: null,
       cities: [
-        "Караганда", "Алматы", "Астана", "Шымкент", "Актобе", "Тараз",
-        "Павлодар", "Оскемен", "Семей", "Атырау", "Костанай",
-        "Кызылорда", "Орал", "Петропавловск", "Актау", "Темиртау",
-        "Туркестан", "Кокшетау", "Талдыкорган"
+        "Астана",
+        // "Караганда", "Алматы", "Шымкент", "Актобе", "Тараз",
+        // "Павлодар", "Оскемен", "Семей", "Атырау", "Костанай",
+        // "Кызылорда", "Орал", "Петропавловск", "Актау", "Темиртау",
+        // "Туркестан", "Кокшетау", "Талдыкорган"
       ],
       errorFields: {
         selectedPrice: false,
@@ -121,17 +121,15 @@ export default {
     };
   },
   methods: {
-   validateNumber(field) {
-  if (field === 'building') {
-    this[field] = this[field].replace(/[^0-9а-яА-Яa-zA-Z]/g, ''); 
-
-
-    const match = this[field].match(/^(\d+)([а-яА-Яa-zA-Z]?)$/);
-    this[field] = match ? match[0] : '';
-  } else {
-    this[field] = this[field].replace(/\D/g, '');
-  }
-},
+    validateNumber(field) {
+      if (field === 'building') {
+        this[field] = this[field].replace(/[^0-9а-яА-Яa-zA-Z]/g, ''); 
+        const match = this[field].match(/^(\d+)([а-яА-Яa-zA-Z]?)$/);
+        this[field] = match ? match[0] : '';
+      } else {
+        this[field] = this[field].replace(/\D/g, '');
+      }
+    },
     formatPhone() {
       setTimeout(() => {
         let value = this.phone.replace(/\D/g, "").substring(0, 11);
@@ -147,27 +145,22 @@ export default {
         this.phone = formatted;
       }, 10);
     },
-    async submitForm() {
-
+    submitForm() {
       if (this.isSubmitting) return;
       this.isSubmitting = true;
 
       this.errorFields.selectedPrice = !this.selectedPrice;
       this.errorFields.selectedCity = !this.selectedCity;
       this.errorFields.phone = !this.phone || this.phone.length !== 18;
-      this.errorFields.apartment = !this.apartment;
       this.errorFields.building = !this.building;
       this.errorFields.street = !this.street;
-      this.errorFields.entrance = !this.entrance;
-      this.errorFields.floor = !this.floor;
 
       if (Object.values(this.errorFields).some(error => error)) {
         this.isSubmitting = false;
         return;
       }
 
-      const formattedPhone = this.phone.replace(/[^+0-9]/g, "");
-      const orderData = {
+      const formData = {
         selected_dates: this.selectedDates,
         price_range: this.selectedPrice.replace(" ₸", "").replace(" ", ""),
         city: this.selectedCity,
@@ -176,70 +169,14 @@ export default {
         apartment: this.apartment,
         entrance: this.entrance,
         floor: this.floor,
-        phone: formattedPhone,
+        phone: this.phone.replace(/[^+0-9]/g, ""),
         comment: this.comment,
-        user_id: this.userId
+        user_id: 461357308,
       };
 
-      try {
-        const response = await fetch("https://bloom-backend-production.up.railway.app/orders", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(orderData)
-        });
-
-        console.log("Отправляем:", JSON.stringify(orderData));
-        const data = await response.json();
-
-        if (response.ok) {
-          console.log("✅ Заказ успешно создан:", data);
-          this.$emit("success");
-
-          setTimeout(() => {
-            if (window.Telegram && window.Telegram.WebApp) {
-              const payload = JSON.stringify({ success: true, user_id: this.userId });
-              console.log("📤 Отправка данных в Telegram:", payload);
-              window.Telegram.WebApp.sendData(payload);
-            } else {
-              console.log("❌ Telegram WebApp не найден, отправляем сообщение напрямую");
-              this.sendTelegramMessage("✅ Ваш заказ успешно оформлен!");
-            }
-          }, 500);
-        }
-      } catch (error) {
-        console.error("Ошибка сети:", error);
-        alert("Ошибка соединения. Проверьте интернет или попробуйте позже.");
-        this.isSubmitting = false;
-      }
-    },
-    async sendTelegramMessage(text) {
-      const BOT_TOKEN = "7656620027:AAFMvmxiOqelHS3hC2IwsaWthlAg3DxRPmA";
-      const TELEGRAM_API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-      
-      try {
-        const response = await fetch(TELEGRAM_API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            chat_id: this.userId,
-            text: text,
-            parse_mode: "Markdown",
-          }),
-        });
-        const data = await response.json();
-        console.log("✅ Сообщение отправлено в Telegram:", data);
-      } catch (error) {
-        console.error("❌ Ошибка отправки в Telegram:", error);
-      }
-    },
-    handleResize() {
-      if (window.visualViewport.height < this.originalHeight) {
-        document.body.style.paddingBottom = (this.originalHeight - window.visualViewport.height) + "px";
-      } else {
-        document.body.style.paddingBottom = "0px";
-      }
+      localStorage.setItem("formData", JSON.stringify(formData));
+      this.$emit("nextStep", formData);
+      console.log(formData);
     },
     getUserId() {
       const urlParams = new URLSearchParams(window.location.search);
@@ -255,6 +192,7 @@ export default {
   }
 };
 </script>
+
 
     
 <style scoped>

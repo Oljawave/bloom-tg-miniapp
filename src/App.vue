@@ -1,34 +1,66 @@
 <template>
   <div class="container" :style="{ marginTop: containerMargin }">
-    <h2 class="sticky-title">ОФОРМЛЕНИЕ ПОДПИСКИ 🌸</h2>
+    <div v-if="step !== 'successMessage'" class="progress-bar-container">
+      <div class="progress-bar">
+        <div class="progress" :style="{ width: progressWidth }"></div>
+      </div>
+      <div class="progress-labels">
+        <span :class="{ active: step === 'datePicker' }">ВЫБОР ДАТЫ</span>
+        <span :class="{ active: step === 'sendForm' }">ДЕТАЛИ ПОДПИСКИ</span>
+        <span :class="{ active: step === 'flowerSelection' }">ВЫБОР БУКЕТА</span>
+      </div>
+    </div>
+    
+    <h2 class="sticky-title">ОФОРМЛЕНИЕ ПОДПИСКИ</h2>
     <DatePicker v-if="step === 'datePicker'" @datesSelected="handleDatesChosen" />
-    <SendForm v-else-if="step === 'sendForm'" :selected-dates="selectedDates" @success="step = 'successMessage'" />
+    <SendForm v-else-if="step === 'sendForm'" :selected-dates="selectedDates" @nextStep="goToFlowerSelection" @success="step = 'successMessage'" />
+    <FlowerSelection v-else-if="step === 'flowerSelection'" @selectionConfirmed="handleSelectionConfirmed" />
     <SuccessMessage v-else @reset="resetProcess" />
   </div>
 </template>
+
 
 <script>
 import DatePicker from "@/components/DatePicker.vue";
 import SendForm from "@/components/SendForm.vue";
 import SuccessMessage from "@/components/SuccessMessage.vue";
+import FlowerSelection from "@/components/FlowerSelection.vue";
 
 export default {
-  components: { DatePicker, SendForm, SuccessMessage },
+  components: { DatePicker, SendForm, SuccessMessage, FlowerSelection },
   data() {
     return {
       step: "datePicker",
       selectedDates: [],
       containerMargin: "0px",
+      progressBarHidden: false,
     };
+  },
+  computed: {
+    progressWidth() {
+      const steps = ["datePicker", "sendForm", "flowerSelection", "successMessage"];
+      const index = steps.indexOf(this.step);
+      return `${(index / (steps.length - 1)) * 100}%`;
+    },
   },
   methods: {
     handleDatesChosen(dates) {
       this.selectedDates = dates;
       this.step = "sendForm";
     },
+    goToFlowerSelection() {
+      this.step = "flowerSelection";
+    },
+    handleSelectionConfirmed() {
+      setTimeout(() => {
+        this.progressBarHidden = true;
+        this.step = "successMessage";
+      }, 500);
+    },
     resetProcess() {
       this.selectedDates = [];
       this.step = "datePicker";
+      this.progressBarHidden = false;
     },
     adjustForKeyboard() {
       const viewportHeight = window.visualViewport.height;
@@ -47,9 +79,8 @@ export default {
     window.visualViewport.removeEventListener("resize", this.adjustForKeyboard);
   },
 };
+
 </script>
-
-
 
 <style>
 :root {
@@ -76,6 +107,54 @@ html, body, #app {
   flex-direction: column;
   align-items: center;
   transition: margin-top 0.3s ease-in-out;
+}
+
+.progress-bar-container {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  border: 0.5px solid black;
+  position: relative;
+}
+
+.progress {
+  height: 100%;
+  background: black;
+  width: 0;
+  transition: width 0.3s ease-in-out;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-top: 5px;
+  color: #666;
+  font-family: "SF Pro", sans-serif;
+}
+
+.progress-labels .active {
+  font-weight: bold;
+  color: black;
+}
+
+.progress-bar-container {
+  transition: opacity 0.5s ease, height 0.5s ease;
+}
+
+.progress-bar-container.hidden {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.progress {
+  transition: width 0.3s ease;
 }
 
 h2 {
