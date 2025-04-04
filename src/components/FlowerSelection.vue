@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h2>ВЫБЕРИТЕ ПРЕДПОЧИТАЕМЫЕ ЦВЕТЫ</h2>
+    <h2 class="title">ВЫБЕРИТЕ ПРЕДПОЧИТАЕМЫЕ ЦВЕТЫ</h2>
 
     <div v-if="!orderSent" class="flower-grid">
       <div
@@ -115,6 +115,10 @@ export default {
     font-size: 16px;
     text-transform: uppercase;
     margin-bottom: 15px;
+  }
+
+  .title {
+    font-size: 12px;
   }
   
   .flower-grid {
