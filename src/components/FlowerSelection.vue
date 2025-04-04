@@ -1,129 +1,104 @@
 <template>
-    <div class="container">
-      <h2>ВЫБЕРИТЕ ПРЕДПОЧИТАЕМЫЕ ЦВЕТЫ</h2>
-  
-      <div v-if="!orderSent" class="flower-grid">
-        <div
-          v-for="flower in flowers"
-          :key="flower.id"
-          class="flower-card"
-          :class="{ selected: selectedFlowers.includes(flower.id), disabled: isDisabled(flower.id) }"
-          @click="toggleSelection(flower.id)"
-        >
-          <div class="image-container">
-            <img :src="flower.image" alt="Цветок" class="flower-image" />
-            <div v-if="!selectedFlowers.includes(flower.id)" class="plus-circle">
-              <span class="plus-icon">+</span>
-            </div>
-          </div>
-          <div class="flower-info">
-            <span class="flower-name">{{ flower.name }}</span>
-            <span class="flower-price">{{ flower.price }} тг</span>
+  <div class="container">
+    <h2>ВЫБЕРИТЕ ПРЕДПОЧИТАЕМЫЕ ЦВЕТЫ</h2>
+
+    <div v-if="!orderSent" class="flower-grid">
+      <div
+        v-for="flower in flowers"
+        :key="flower.id"
+        class="flower-card"
+        :class="{ selected: selectedFlowers.includes(flower.id), disabled: isDisabled(flower.id) }"
+        @click="toggleSelection(flower.id)"
+      >
+        <div class="image-container">
+          <img :src="flower.image" alt="Цветок" class="flower-image" />
+          <div v-if="!selectedFlowers.includes(flower.id)" class="plus-circle">
+            <span class="plus-icon">+</span>
           </div>
         </div>
-      </div>
-  
-      <div class="button-container" v-if="!orderSent">
-        <button
-          class="continue-btn"
-          :class="{ 'selected-btn': selectedFlowers.length > 0 }"
-          :disabled="selectedFlowers.length === 0 || isSubmitting"
-          @click="submitSelection"
-        >
-          {{ isSubmitting ? "ОТПРАВКА..." : "ПРОДОЛЖИТЬ" }}
-        </button>
+        <div class="flower-info">
+          <span class="flower-name">{{ flower.name }}</span>
+          <span class="flower-price">{{ flower.price }} тг</span>
+        </div>
       </div>
     </div>
-  </template>
-  
-  <script>
-  import axios from "axios";
-  
-  export default {
-    data() {
-      return {
-        flowers: [],
-        selectedFlowers: [],
-        maxSelectable: JSON.parse(localStorage.getItem("selectedDates"))?.length || 0,
-        isSubmitting: false,
-        orderSent: false,
-        username: "remakob401@nalwan.com",
-        password: "Bloooom1@",
-      };
+
+    <div class="button-container" v-if="!orderSent">
+      <button
+        class="continue-btn"
+        :class="{ 'selected-btn': selectedFlowers.length > 0 }"
+        :disabled="selectedFlowers.length === 0 || isSubmitting"
+        @click="submitSelection"
+      >
+        {{ isSubmitting ? "ОТПРАВКА..." : "ПРОДОЛЖИТЬ" }}
+      </button>
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      flowers: [],
+      selectedFlowers: [],
+      maxSelectable: JSON.parse(localStorage.getItem("selectedDates"))?.length || 0,
+      isSubmitting: false,
+      orderSent: false,
+    };
+  },
+  methods: {
+    toggleSelection(flowerId) {
+      if (this.selectedFlowers.includes(flowerId)) {
+        this.selectedFlowers = this.selectedFlowers.filter((id) => id !== flowerId);
+      } else if (this.selectedFlowers.length < this.maxSelectable) {
+        this.selectedFlowers.push(flowerId);
+      }
     },
-    methods: {
-      toggleSelection(flowerId) {
-        if (this.selectedFlowers.includes(flowerId)) {
-          this.selectedFlowers = this.selectedFlowers.filter((id) => id !== flowerId);
-        } else if (this.selectedFlowers.length < this.maxSelectable) {
-          this.selectedFlowers.push(flowerId);
-        }
-      },
-  
-      async submitSelection() {
-        if (this.isSubmitting) return;
-        this.isSubmitting = true;
-  
-        const formData = JSON.parse(localStorage.getItem("formData")) || {};
-        formData.selected_flowers = this.selectedFlowers;
-  
-        try {
-          const response = await axios.post("https://bloom-backend-production.up.railway.app/orders", formData);
-          console.log("Заказ успешно отправлен:", response.data);
-          
-          this.orderSent = true;
-          localStorage.removeItem("formData");
-          this.$emit("selectionConfirmed");
-        } catch (error) {
-          console.error("Ошибка при отправке заказа:", error);
-        } finally {
-          this.isSubmitting = false;
-        }
-      },
-  
-      isDisabled(flowerId) {
-        return this.selectedFlowers.length >= this.maxSelectable && !this.selectedFlowers.includes(flowerId);
-      },
-  
-      async fetchFlowers() {
-        try {
-          const token = await this.authenticate();
-          const response = await axios.get("http://api.bloooom.kz:8443/v1/bouquet/branch/3", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          this.flowers = response.data.map((flower) => ({
-            id: flower.id,
-            name: flower.name,
-            price: flower.price,
-            image: flower.bouquetPhotos[0]?.url || "https://via.placeholder.com/150",
-          }));
-        } catch (error) {
-          console.error("Ошибка при загрузке данных о цветах:", error);
-        }
-      },
-  
-      async authenticate() {
-        try {
-          const response = await axios.post("http://api.bloooom.kz:8443/v1/employee/login", {
-            username: this.username,
-            password: this.password,
-          });
-          const token = response.data.accessToken;
-          localStorage.setItem("authToken", token);
-          return token;
-        } catch (error) {
-          console.error("Ошибка авторизации:", error);
-          alert("Не удалось авторизоваться.");
-          throw error;
-        }
-      },
+
+    async submitSelection() {
+      if (this.isSubmitting) return;
+      this.isSubmitting = true;
+
+      const formData = JSON.parse(localStorage.getItem("formData")) || {};
+      formData.selected_flowers = this.selectedFlowers;
+
+      try {
+        const response = await axios.post("https://bloom-backend-production.up.railway.app/orders", formData);
+        console.log("Заказ успешно отправлен:", response.data);
+
+        this.orderSent = true;
+        localStorage.removeItem("formData");
+        this.$emit("selectionConfirmed");
+      } catch (error) {
+        console.error("Ошибка при отправке заказа:", error);
+      } finally {
+        this.isSubmitting = false;
+      }
     },
-    mounted() {
-      localStorage.removeItem("selectedFlowers");
-      this.fetchFlowers();
+
+    isDisabled(flowerId) {
+      return this.selectedFlowers.length >= this.maxSelectable && !this.selectedFlowers.includes(flowerId);
     },
-  };
-  </script>
+
+    async fetchFlowers() {
+      try {
+        const response = await axios.get("https://bloom-backend-production.up.railway.app/flowers");
+        this.flowers = response.data;
+      } catch (error) {
+        console.error("Ошибка при загрузке данных о цветах:", error);
+      }
+    },
+  },
+  mounted() {
+    localStorage.removeItem("selectedFlowers");
+    this.fetchFlowers();
+  },
+};
+</script>
+
   
   <style scoped>
   .container {
