@@ -4,7 +4,7 @@
 
     <div v-if="!orderSent" class="flower-grid">
       <div
-        v-for="flower in flowers"
+        v-for="flower in filteredFlowers"
         :key="flower.id"
         class="flower-card"
         :class="{ selected: selectedFlowers.includes(flower.id), disabled: isDisabled(flower.id) }"
@@ -47,7 +47,16 @@ export default {
       maxSelectable: JSON.parse(localStorage.getItem("selectedDates"))?.length || 0,
       isSubmitting: false,
       orderSent: false,
+      priceRange: [0, Infinity],
     };
+  },
+  computed: {
+    filteredFlowers() {
+      return this.flowers.filter((flower) => {
+        const [min, max] = this.priceRange;
+        return flower.price >= min && flower.price <= max;
+      });
+    }
   },
   methods: {
     toggleSelection(flowerId) {
@@ -67,13 +76,13 @@ export default {
 
       try {
         const response = await axios.post("https://bloom-backend-production.up.railway.app/orders", formData);
-        console.log("Заказ успешно отправлен:", response.data);
+        console.log("✅ Заказ успешно отправлен:", response.data);
 
         this.orderSent = true;
         localStorage.removeItem("formData");
         this.$emit("selectionConfirmed");
       } catch (error) {
-        console.error("Ошибка при отправке заказа:", error);
+        console.error("❌ Ошибка при отправке заказа:", error);
       } finally {
         this.isSubmitting = false;
       }
@@ -87,17 +96,45 @@ export default {
       try {
         const response = await axios.get("https://bloom-backend-production.up.railway.app/flowers");
         this.flowers = response.data;
+        console.log("🌸 Загруженные цветы:", this.flowers);
       } catch (error) {
-        console.error("Ошибка при загрузке данных о цветах:", error);
+        console.error("❌ Ошибка при загрузке данных о цветах:", error);
       }
     },
+
+    getPriceRange() {
+      const formData = JSON.parse(localStorage.getItem("formData")) || {};
+      const priceStr = formData.price_range || "";
+
+      if (priceStr.includes("+")) {
+        const min = parseInt(priceStr);
+        this.priceRange = [min, Infinity];
+        console.log("📦 Диапазон: больше", min);
+      } else if (priceStr.includes("-")) {
+        const match = priceStr.match(/(\d+)[^\d]+(\d+)/);
+        if (match) {
+          const min = parseInt(match[1]);
+          const max = parseInt(match[2]);
+          this.priceRange = [min, max];
+          console.log("📦 Диапазон от", min, "до", max);
+        } else {
+          this.priceRange = [0, Infinity];
+          console.warn("⚠️ Не удалось разобрать диапазон цен. Используется дефолт.");
+        }
+      } else {
+        this.priceRange = [0, Infinity];
+        console.warn("⚠️ Неизвестный формат диапазона. Используется дефолт.");
+      }
+    }
   },
   mounted() {
     localStorage.removeItem("selectedFlowers");
+    this.getPriceRange();
     this.fetchFlowers();
   },
 };
 </script>
+
 
   
   <style scoped>

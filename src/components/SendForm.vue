@@ -171,11 +171,17 @@ export default {
         floor: this.floor,
         phone: this.phone.replace(/[^+0-9]/g, ""),
         comment: this.comment,
-        user_id: 461357308,
+        user_id: this.userId || 461357308,
       };
 
       localStorage.setItem("formData", JSON.stringify(formData));
-      this.$emit("nextStep", formData);
+
+      if (this.selectedPrice === "5000 ₸ - 10000 ₸") {
+        this.$emit("skipFlowerSelection", formData);
+      } else {
+        this.$emit("nextStep", formData);
+      }
+
       console.log(formData);
     },
     getUserId() {

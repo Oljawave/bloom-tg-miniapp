@@ -1,6 +1,6 @@
 <template>
   <div class="container" :style="{ marginTop: containerMargin }">
-    <div v-if="step !== 'successMessage'" class="progress-bar-container">
+    <div v-if="step !== 'successMessage' && !progressBarHidden" class="progress-bar-container">
       <div class="progress-bar">
         <div class="progress" :style="{ width: progressWidth }"></div>
       </div>
@@ -10,28 +10,57 @@
         <span :class="{ active: step === 'flowerSelection' }">ВЫБОР БУКЕТА</span>
       </div>
     </div>
-    
-    <h2 class="sticky-title">ОФОРМЛЕНИЕ ПОДПИСКИ</h2>
+
+    <h2 class="sticky-title">
+      <Icon
+        v-if="step !== 'datePicker' && step !== 'successMessage'"
+        icon="lets-icons:expand-left-light"
+        class="back-arrow"
+        @click="goToPreviousStep"
+      />
+      ОФОРМЛЕНИЕ ПОДПИСКИ
+    </h2>
+
     <DatePicker v-if="step === 'datePicker'" @datesSelected="handleDatesChosen" />
-    <SendForm v-else-if="step === 'sendForm'" :selected-dates="selectedDates" @nextStep="goToFlowerSelection" @success="step = 'successMessage'" />
-    <FlowerSelection v-else-if="step === 'flowerSelection'" @selectionConfirmed="handleSelectionConfirmed" />
+
+    <SendForm
+      v-else-if="step === 'sendForm'"
+      :selected-dates="selectedDates"
+      @nextStep="goToFlowerSelection"
+      @skipFlowerSelection="goToFinalStep"
+      @success="step = 'successMessage'"
+    />
+
+    <FlowerSelection
+      v-else-if="step === 'flowerSelection'"
+      @selectionConfirmed="handleSelectionConfirmed"
+    />
+
     <SuccessMessage v-else @reset="resetProcess" />
   </div>
 </template>
 
-
 <script>
+import axios from "axios";
+import { Icon } from "@iconify/vue"; // ✅ Импорт Icon компонента
 import DatePicker from "@/components/DatePicker.vue";
 import SendForm from "@/components/SendForm.vue";
 import SuccessMessage from "@/components/SuccessMessage.vue";
 import FlowerSelection from "@/components/FlowerSelection.vue";
 
 export default {
-  components: { DatePicker, SendForm, SuccessMessage, FlowerSelection },
+  components: {
+    DatePicker,
+    SendForm,
+    SuccessMessage,
+    FlowerSelection,
+    Icon, // ✅ Регистрация компонента
+  },
   data() {
     return {
       step: "datePicker",
       selectedDates: [],
+      formData: {},
       containerMargin: "0px",
       progressBarHidden: false,
     };
@@ -48,24 +77,55 @@ export default {
       this.selectedDates = dates;
       this.step = "sendForm";
     },
-    goToFlowerSelection() {
+
+    goToFlowerSelection(formData) {
+      this.formData = formData;
+      localStorage.setItem("formData", JSON.stringify(formData));
       this.step = "flowerSelection";
     },
+
+    async goToFinalStep(formData) {
+      this.formData = formData;
+      localStorage.setItem("formData", JSON.stringify(formData));
+      this.progressBarHidden = true;
+
+      try {
+        const finalData = JSON.parse(localStorage.getItem("formData")) || {};
+        const response = await axios.post("https://bloom-backend-production.up.railway.app/orders", finalData);
+        console.log("Заказ успешно отправлен (без цветов):", response.data);
+        this.step = "successMessage";
+        localStorage.removeItem("formData");
+      } catch (error) {
+        console.error("Ошибка при отправке заказа (без цветов):", error);
+      }
+    },
+
     handleSelectionConfirmed() {
       setTimeout(() => {
         this.progressBarHidden = true;
         this.step = "successMessage";
       }, 500);
     },
+
     resetProcess() {
       this.selectedDates = [];
+      this.formData = {};
       this.step = "datePicker";
       this.progressBarHidden = false;
     },
+
     adjustForKeyboard() {
       const viewportHeight = window.visualViewport.height;
       const windowHeight = window.innerHeight;
       this.containerMargin = viewportHeight < windowHeight ? `-${windowHeight - viewportHeight}px` : "0px";
+    },
+
+    goToPreviousStep() {
+      if (this.step === "sendForm") {
+        this.step = "datePicker";
+      } else if (this.step === "flowerSelection") {
+        this.step = "sendForm";
+      }
     },
   },
   mounted() {
@@ -79,8 +139,9 @@ export default {
     window.visualViewport.removeEventListener("resize", this.adjustForKeyboard);
   },
 };
-
 </script>
+
+
 
 <style>
 :root {
@@ -155,6 +216,15 @@ html, body, #app {
 
 .progress {
   transition: width 0.3s ease;
+}
+
+.back-arrow {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  cursor: pointer;
 }
 
 h2 {
