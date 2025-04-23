@@ -18,6 +18,7 @@
         </span>
       </div>
     </div>
+    <p v-if="!error" class="info-text">Выберите одну или несколько дат</p>
     <p v-if="error" class="error-text">Выберите хотя бы одну дату</p>
     <button class="continue-btn" @click="confirmDates">ПРОДОЛЖИТЬ</button>
   </div>
@@ -211,6 +212,15 @@ hr.error {
   width: 100%;
   text-align: left;
 }
+
+.info-text {
+  color: black;
+  font-size: 12px;
+  margin-top: 5px;
+  width: 100%;
+  text-align: left;
+}
+
 
 .continue-btn {
   margin-top: 50px;
