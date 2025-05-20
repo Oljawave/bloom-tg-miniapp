@@ -75,7 +75,7 @@ export default {
       formData.selected_flowers = this.selectedFlowers;
 
       try {
-        const response = await axios.post("https://bloom-backend-production.up.railway.app/orders", formData);
+        const response = await axios.post("http://192.168.1.43:8000/orders", formData);
         console.log("✅ Заказ успешно отправлен:", response.data);
 
         this.orderSent = true;
@@ -94,7 +94,7 @@ export default {
 
     async fetchFlowers() {
       try {
-        const response = await axios.get("https://bloom-backend-production.up.railway.app/flowers");
+        const response = await axios.get("http://192.168.1.43:8000/flowers");
         this.flowers = response.data;
         console.log("🌸 Загруженные цветы:", this.flowers);
       } catch (error) {

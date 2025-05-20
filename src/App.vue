@@ -91,7 +91,7 @@ export default {
 
       try {
         const finalData = JSON.parse(localStorage.getItem("formData")) || {};
-        const response = await axios.post("https://bloom-backend-production.up.railway.app/orders", finalData);
+        const response = await axios.post("http://192.168.1.43:8000/orders", finalData);
         console.log("Заказ успешно отправлен (без цветов):", response.data);
         this.step = "successMessage";
         localStorage.removeItem("formData");
